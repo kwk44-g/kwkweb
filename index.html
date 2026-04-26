@@ -1,10 +1,1577 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>yup.igotyou.lol</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile</title>
+  <style>
+    :root {
+      --bg: #0a0d09;
+      --bg-soft: #161a13;
+      --panel: rgba(17, 21, 16, 0.9);
+      --line: rgba(176, 204, 104, 0.22);
+      --text: #dde0c8;
+      --muted: #97a17e;
+      --accent: #b9d86f;
+      --accent-soft: #f0c86f;
+      --danger: #d47658;
+      --rust: #70543b;
+      --shadow: 0 0 24px rgba(185, 216, 111, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at top, rgba(185, 216, 111, 0.07), transparent 24%),
+        radial-gradient(circle at bottom, rgba(112, 84, 59, 0.12), transparent 28%),
+        linear-gradient(180deg, #0b0f0b 0%, #040503 100%);
+      color: var(--text);
+      font-family: "Courier New", Courier, monospace;
+      font-language-override: normal;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(255, 255, 255, 0.035) 0,
+          rgba(255, 255, 255, 0.035) 1px,
+          transparent 1px,
+          transparent 3px
+        );
+      mix-blend-mode: soft-light;
+      opacity: 0.28;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, rgba(212, 118, 88, 0.045), transparent 24%, transparent 76%, rgba(185, 216, 111, 0.04)),
+        radial-gradient(circle at center, transparent 55%, rgba(0, 0, 0, 0.45) 100%);
+      opacity: 0.55;
+    }
+
+    .noise {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.06;
+      background-image:
+        radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.85) 0.7px, transparent 0.9px),
+        radial-gradient(circle at 80% 40%, rgba(255, 255, 255, 0.65) 0.7px, transparent 0.9px),
+        radial-gradient(circle at 40% 70%, rgba(255, 255, 255, 0.75) 0.7px, transparent 0.9px);
+      background-size: 18px 18px;
+      animation: drift 6s steps(6) infinite;
+    }
+
+    .grid {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(185, 216, 111, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(185, 216, 111, 0.05) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.9) 22%, rgba(0, 0, 0, 0.9) 78%, transparent);
+      opacity: 0.18;
+    }
+
+    .fog {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 10% 80%, rgba(185, 216, 111, 0.1), transparent 18%),
+        radial-gradient(circle at 85% 22%, rgba(112, 84, 59, 0.12), transparent 22%),
+        radial-gradient(circle at 50% 100%, rgba(119, 132, 84, 0.1), transparent 30%);
+      filter: blur(24px);
+      opacity: 0.7;
+      animation: fogShift 18s ease-in-out infinite alternate;
+    }
+
+    main {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 32px 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .shell {
+      width: min(100%, 860px);
+      border: 1px solid var(--line);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(4px);
+    }
+
+    .shell .grain {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(125deg, transparent 0 44%, rgba(112, 84, 59, 0.08) 49%, transparent 54%),
+        linear-gradient(25deg, transparent 0 74%, rgba(185, 216, 111, 0.05) 79%, transparent 84%);
+      opacity: 0.8;
+    }
+
+    .shell::before,
+    .shell::after {
+      content: "";
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border: 2px solid var(--accent);
+    }
+
+    .shell::before {
+      top: 10px;
+      left: 10px;
+      border-right: 0;
+      border-bottom: 0;
+    }
+
+    .shell::after {
+      right: 10px;
+      bottom: 10px;
+      border-left: 0;
+      border-top: 0;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--line);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      font-size: 12px;
+      background: rgba(185, 216, 111, 0.03);
+    }
+
+    .lights {
+      display: flex;
+      gap: 8px;
+    }
+
+    .lights span {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: block;
+      background: currentColor;
+      box-shadow: 0 0 10px currentColor;
+    }
+
+    .lights span:nth-child(1) { color: var(--danger); }
+    .lights span:nth-child(2) { color: var(--accent-soft); }
+    .lights span:nth-child(3) { color: var(--accent); }
+
+    .profile-banner {
+      height: 240px;
+      position: relative;
+      border-bottom: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.5)),
+        radial-gradient(circle at 20% 30%, rgba(185, 216, 111, 0.16), transparent 18%),
+        radial-gradient(circle at 72% 18%, rgba(112, 84, 59, 0.22), transparent 22%),
+        linear-gradient(135deg, #1a2117 0%, #10130f 46%, #191611 100%);
+      overflow: hidden;
+    }
+
+    .profile-banner::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(120deg, transparent 0 46%, rgba(185, 216, 111, 0.08) 50%, transparent 54%),
+        linear-gradient(0deg, rgba(0, 0, 0, 0.42), transparent 46%);
+    }
+
+    .profile-banner::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0;
+      height: 72px;
+      background: linear-gradient(180deg, transparent, rgba(6, 8, 6, 0.85));
+    }
+
+    .banner-silhouette {
+      position: absolute;
+      inset: auto 0 0;
+      height: 110px;
+      background:
+        linear-gradient(90deg, transparent 0 8%, rgba(0, 0, 0, 0.55) 8% 11%, transparent 11% 24%, rgba(0, 0, 0, 0.48) 24% 32%, transparent 32% 46%, rgba(0, 0, 0, 0.62) 46% 56%, transparent 56% 69%, rgba(0, 0, 0, 0.52) 69% 81%, transparent 81%);
+      opacity: 0.9;
+    }
+
+    .profile-head {
+      display: grid;
+      grid-template-columns: 162px 1fr 120px;
+      gap: 18px;
+      align-items: end;
+      padding: 0 24px 22px;
+      margin-top: -64px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .avatar-frame {
+      width: 162px;
+      height: 162px;
+      padding: 8px;
+      border: 1px solid rgba(240, 200, 111, 0.28);
+      background: linear-gradient(180deg, rgba(44, 48, 33, 0.95), rgba(12, 16, 12, 0.95));
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+    }
+
+    .avatar-core {
+      width: 100%;
+      height: 100%;
+      border: 1px solid var(--line);
+      background:
+        radial-gradient(circle at 50% 34%, rgba(185, 216, 111, 0.18), transparent 20%),
+        linear-gradient(180deg, rgba(185, 216, 111, 0.06), rgba(0, 0, 0, 0.12)),
+        linear-gradient(135deg, #21261d, #121510);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .avatar-core img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: sepia(0.45) contrast(0.95) saturate(0.78) brightness(0.9);
+      opacity: 0.94;
+    }
+
+    .avatar-core::before,
+    .avatar-core::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+    }
+
+    .avatar-core::before {
+      inset: 0;
+      background:
+        radial-gradient(circle at 50% 50%, transparent 58%, rgba(8, 10, 8, 0.42) 100%),
+        linear-gradient(180deg, rgba(185, 216, 111, 0.08), transparent 34%, rgba(0, 0, 0, 0.32));
+    }
+
+    .avatar-core::after {
+      inset: 8px;
+      border: 1px solid rgba(185, 216, 111, 0.16);
+    }
+
+    .identity {
+      display: grid;
+      gap: 14px;
+      padding-bottom: 10px;
+    }
+
+    .nameplate {
+      color: var(--text);
+      font-size: clamp(2.1rem, 6vw, 3.4rem);
+      line-height: 1;
+      letter-spacing: 0.08em;
+      text-transform: lowercase;
+      text-shadow:
+        0 0 16px rgba(185, 216, 111, 0.18),
+        2px 0 0 rgba(212, 118, 88, 0.1);
+    }
+
+    .bar {
+      height: 12px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(222, 224, 200, 0.9), rgba(151, 161, 126, 0.35));
+      opacity: 0.9;
+    }
+
+    .bar.short { width: 96px; }
+    .bar.mid { width: min(62%, 260px); }
+    .bar.long { width: min(82%, 420px); }
+    .bar.accent {
+      height: 9px;
+      width: min(42%, 190px);
+      background: linear-gradient(90deg, rgba(240, 200, 111, 0.8), rgba(185, 216, 111, 0.35));
+    }
+
+    .badge-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      width: 68px;
+      height: 22px;
+      border: 1px solid var(--line);
+      background: rgba(185, 216, 111, 0.06);
+      position: relative;
+    }
+
+    .chip::after {
+      content: "";
+      position: absolute;
+      inset: 5px 12px;
+      border-radius: 999px;
+      background: rgba(185, 216, 111, 0.42);
+    }
+
+    .status-stack {
+      display: grid;
+      gap: 10px;
+      justify-items: end;
+      padding-bottom: 8px;
+    }
+
+    .status-pill {
+      width: 88px;
+      height: 18px;
+      border: 1px solid var(--line);
+      background: linear-gradient(90deg, rgba(185, 216, 111, 0.12), rgba(212, 118, 88, 0.08));
+      position: relative;
+    }
+
+    .status-pill::before {
+      content: "";
+      position: absolute;
+      left: 8px;
+      top: 50%;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      transform: translateY(-50%);
+      box-shadow: 0 0 10px rgba(185, 216, 111, 0.45);
+      animation: blink 1.8s steps(2) infinite;
+    }
+
+    .status-pill::after {
+      content: "";
+      position: absolute;
+      right: 8px;
+      left: 24px;
+      top: 6px;
+      height: 4px;
+      background: rgba(221, 224, 200, 0.42);
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: minmax(0, 1.55fr) minmax(260px, 0.95fr);
+      gap: 16px;
+      padding: 0 24px 24px;
+    }
+
+    .left-column,
+    .right-column {
+      display: grid;
+      gap: 16px;
+      align-content: start;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(185, 216, 111, 0.04), rgba(112, 84, 59, 0.04));
+      overflow: hidden;
+    }
+
+    .panel-top {
+      height: 38px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(90deg, rgba(185, 216, 111, 0.06), transparent 45%);
+      position: relative;
+    }
+
+    .panel-top::after {
+      content: "";
+      position: absolute;
+      left: 14px;
+      top: 13px;
+      width: 110px;
+      height: 10px;
+      background: rgba(221, 224, 200, 0.18);
+      border-radius: 999px;
+    }
+
+    .panel-body {
+      padding: 16px;
+    }
+
+    .showcase-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .showcase-card {
+      aspect-ratio: 1.1 / 0.92;
+      border: 1px solid rgba(176, 204, 104, 0.2);
+      background:
+        linear-gradient(180deg, rgba(185, 216, 111, 0.08), rgba(0, 0, 0, 0.12)),
+        linear-gradient(135deg, #20251c, #121510);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .showcase-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 70% 22%, rgba(185, 216, 111, 0.14), transparent 16%),
+        linear-gradient(135deg, transparent 0 58%, rgba(112, 84, 59, 0.18) 64%, transparent 72%);
+    }
+
+    .showcase-card::after {
+      content: "";
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(221, 224, 200, 0.18);
+    }
+
+    .featured {
+      aspect-ratio: 2.1 / 0.9;
+    }
+
+    .featured::after {
+      left: 18px;
+      right: 45%;
+      bottom: 16px;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .slot-row {
+      display: grid;
+      gap: 10px;
+    }
+
+    .slot {
+      height: 52px;
+      border: 1px solid rgba(176, 204, 104, 0.18);
+      background: linear-gradient(90deg, rgba(185, 216, 111, 0.05), rgba(255, 255, 255, 0.02));
+      position: relative;
+    }
+
+    .slot::before {
+      content: "";
+      position: absolute;
+      left: 12px;
+      top: 12px;
+      width: 26px;
+      height: 26px;
+      border: 1px solid rgba(240, 200, 111, 0.3);
+      background: rgba(112, 84, 59, 0.18);
+    }
+
+    .slot::after {
+      content: "";
+      position: absolute;
+      left: 50px;
+      right: 16px;
+      top: 18px;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(221, 224, 200, 0.18);
+    }
+
+    .friend-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .friend {
+      aspect-ratio: 1 / 1;
+      border: 1px solid rgba(176, 204, 104, 0.18);
+      background:
+        radial-gradient(circle at 50% 35%, rgba(185, 216, 111, 0.14), transparent 20%),
+        linear-gradient(135deg, #1d221a, #10130f);
+      position: relative;
+    }
+
+    .friend::after {
+      content: "";
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(221, 224, 200, 0.16);
+    }
+
+    .music-panel {
+      display: grid;
+      gap: 14px;
+    }
+
+    .music-art {
+      aspect-ratio: 2.1 / 0.9;
+      border: 1px solid rgba(176, 204, 104, 0.2);
+      background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.45)),
+        radial-gradient(circle at 22% 30%, rgba(185, 216, 111, 0.14), transparent 15%),
+        radial-gradient(circle at 74% 24%, rgba(112, 84, 59, 0.22), transparent 18%),
+        linear-gradient(135deg, #22261d, #11140f);
+      position: relative;
+      overflow: hidden;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .music-art::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.5)),
+        radial-gradient(circle at 22% 30%, rgba(185, 216, 111, 0.14), transparent 15%),
+        radial-gradient(circle at 74% 24%, rgba(112, 84, 59, 0.22), transparent 18%);
+      z-index: 0;
+    }
+
+    .music-art::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0;
+      height: 42%;
+      background:
+        linear-gradient(90deg, transparent 0 12%, rgba(0, 0, 0, 0.55) 12% 18%, transparent 18% 35%, rgba(0, 0, 0, 0.52) 35% 48%, transparent 48% 62%, rgba(0, 0, 0, 0.56) 62% 73%, transparent 73%);
+      opacity: 0.82;
+      z-index: 1;
+    }
+
+    .music-info {
+      display: grid;
+      gap: 4px;
+    }
+
+    .music-title {
+      color: var(--text);
+      font-size: 16px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .music-subtitle {
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .music-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .transport {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-button {
+      width: 34px;
+      height: 34px;
+      border: 1px solid var(--line);
+      background: rgba(185, 216, 111, 0.08);
+      color: var(--text);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .icon-button:hover {
+      border-color: rgba(185, 216, 111, 0.42);
+      box-shadow: 0 0 16px rgba(185, 216, 111, 0.12);
+      transform: translateY(-1px);
+    }
+
+    .play-toggle {
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(185, 216, 111, 0.12), rgba(112, 84, 59, 0.1));
+      color: var(--text);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .play-toggle:hover {
+      border-color: rgba(185, 216, 111, 0.42);
+      box-shadow: 0 0 16px rgba(185, 216, 111, 0.12);
+      transform: translateY(-1px);
+    }
+
+    .play-toggle .pause-shape,
+    .play-toggle.is-playing .play-shape {
+      display: none;
+    }
+
+    .play-toggle.is-playing .pause-shape {
+      display: flex;
+    }
+
+    .play-shape {
+      width: 0;
+      height: 0;
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
+      border-left: 12px solid var(--text);
+      margin-left: 3px;
+    }
+
+    .pause-shape {
+      gap: 4px;
+    }
+
+    .pause-shape span {
+      width: 4px;
+      height: 14px;
+      background: var(--text);
+      display: block;
+    }
+
+    .music-progress {
+      display: grid;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .volume-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .volume-icon {
+      width: 14px;
+      height: 14px;
+      border: 1px solid rgba(240, 200, 111, 0.35);
+      background: rgba(185, 216, 111, 0.08);
+      clip-path: polygon(0 36%, 24% 36%, 52% 10%, 52% 90%, 24% 64%, 0 64%);
+      flex: 0 0 auto;
+    }
+
+    .volume-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(221, 224, 200, 0.1);
+      outline: none;
+    }
+
+    .volume-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 1px solid rgba(240, 200, 111, 0.45);
+      background: #d8ddba;
+      box-shadow: 0 0 8px rgba(240, 200, 111, 0.16);
+      cursor: pointer;
+    }
+
+    .volume-slider::-moz-range-thumb {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 1px solid rgba(240, 200, 111, 0.45);
+      background: #d8ddba;
+      box-shadow: 0 0 8px rgba(240, 200, 111, 0.16);
+      cursor: pointer;
+    }
+
+    .time-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .progress-track {
+      position: relative;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(221, 224, 200, 0.1);
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .progress-fill {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent-soft), var(--accent));
+      box-shadow: 0 0 12px rgba(185, 216, 111, 0.16);
+    }
+
+    .progress-thumb {
+      position: absolute;
+      top: 50%;
+      left: 0%;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 1px solid rgba(240, 200, 111, 0.45);
+      background: #d8ddba;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 8px rgba(240, 200, 111, 0.16);
+      pointer-events: none;
+    }
+
+    .playlist {
+      display: grid;
+      gap: 8px;
+    }
+
+    .playlist-item {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 44px 1fr auto;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border: 1px solid rgba(176, 204, 104, 0.16);
+      background: rgba(185, 216, 111, 0.04);
+      color: var(--text);
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+      transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
+    }
+
+    .playlist-item:hover {
+      border-color: rgba(185, 216, 111, 0.34);
+      background: rgba(185, 216, 111, 0.08);
+      transform: translateX(2px);
+    }
+
+    .playlist-item.is-active {
+      border-color: rgba(240, 200, 111, 0.34);
+      background: linear-gradient(90deg, rgba(240, 200, 111, 0.08), rgba(185, 216, 111, 0.06));
+    }
+
+    .playlist-thumb {
+      width: 44px;
+      height: 44px;
+      border: 1px solid rgba(176, 204, 104, 0.18);
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .playlist-thumb::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.36));
+    }
+
+    .playlist-meta {
+      min-width: 0;
+    }
+
+    .playlist-name,
+    .playlist-artist {
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-transform: uppercase;
+    }
+
+    .playlist-name {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+    }
+
+    .playlist-artist {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+    }
+
+    .playlist-duration {
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .radio-control {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 3;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      background: rgba(12, 15, 11, 0.88);
+      color: var(--text);
+      font: inherit;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+    }
+
+    .radio-control .led {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #4c5440;
+      box-shadow: 0 0 0 transparent;
+      transition: background 180ms ease, box-shadow 180ms ease;
+    }
+
+    .radio-control.is-on .led {
+      background: var(--accent-soft);
+      box-shadow: 0 0 12px var(--accent-soft);
+    }
+
+    .youtube-player {
+      position: fixed;
+      width: 1px;
+      height: 1px;
+      left: -9999px;
+      top: -9999px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0.35; }
+    }
+
+    @keyframes drift {
+      0% { transform: translate(0, 0); }
+      25% { transform: translate(-8px, 4px); }
+      50% { transform: translate(6px, -3px); }
+      75% { transform: translate(-4px, -6px); }
+      100% { transform: translate(0, 0); }
+    }
+
+    @keyframes fogShift {
+      from { transform: translate3d(-1.5%, 0, 0) scale(1); }
+      to { transform: translate3d(1.5%, -1%, 0) scale(1.05); }
+    }
+
+    @media (max-width: 760px) {
+      .profile-banner {
+        height: 180px;
+      }
+
+      .profile-head {
+        grid-template-columns: 1fr;
+        justify-items: start;
+        margin-top: -48px;
+      }
+
+      .status-stack {
+        justify-items: start;
+      }
+
+      .content {
+        grid-template-columns: 1fr;
+      }
+
+      .showcase-grid,
+      .friend-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+  </style>
 </head>
 <body>
-    <!-- yup.igotyou.lol -->
+  <div class="noise" aria-hidden="true"></div>
+  <div class="grid" aria-hidden="true"></div>
+  <div class="fog" aria-hidden="true"></div>
+
+  <main>
+    <section class="shell" aria-label="Retro profile page">
+      <div class="grain" aria-hidden="true"></div>
+      <div class="topbar">
+        <div class="lights" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <div aria-hidden="true"></div>
+      </div>
+
+      <div class="profile-banner">
+        <div class="banner-silhouette" aria-hidden="true"></div>
+      </div>
+
+      <div class="profile-head">
+        <div class="avatar-frame">
+          <div class="avatar-core">
+            <img src="assets/profile.jpeg" alt="Profile photo">
+          </div>
+        </div>
+
+        <div class="identity">
+          <div class="nameplate">kwk</div>
+          <div class="bar long"></div>
+          <div class="bar accent"></div>
+          <div class="badge-row">
+            <div class="chip"></div>
+            <div class="chip"></div>
+            <div class="chip"></div>
+          </div>
+        </div>
+
+        <div class="status-stack">
+          <div class="status-pill"></div>
+          <div class="bar short"></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="left-column">
+          <section class="panel" aria-hidden="true">
+            <div class="panel-top"></div>
+            <div class="panel-body">
+              <div class="showcase-grid">
+                <div class="showcase-card featured"></div>
+                <div class="showcase-card"></div>
+                <div class="showcase-card"></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel" aria-hidden="true">
+            <div class="panel-top"></div>
+            <div class="panel-body">
+              <div class="mini-grid">
+                <div class="showcase-card"></div>
+                <div class="showcase-card"></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel" aria-hidden="true">
+            <div class="panel-top"></div>
+            <div class="panel-body">
+              <div class="slot-row">
+                <div class="slot"></div>
+                <div class="slot"></div>
+                <div class="slot"></div>
+                <div class="slot"></div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <aside class="right-column">
+          <section class="panel" aria-hidden="true">
+            <div class="panel-top"></div>
+            <div class="panel-body">
+              <div class="slot-row">
+                <div class="slot"></div>
+                <div class="slot"></div>
+                <div class="slot"></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel" aria-hidden="true">
+            <div class="panel-top"></div>
+            <div class="panel-body">
+              <div class="friend-grid">
+                <div class="friend"></div>
+                <div class="friend"></div>
+                <div class="friend"></div>
+                <div class="friend"></div>
+                <div class="friend"></div>
+                <div class="friend"></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-top"></div>
+            <div class="panel-body">
+              <div class="music-panel">
+                <div class="music-art" id="musicArt" aria-hidden="true"></div>
+                <div class="music-info">
+                  <div class="music-title" id="musicTitle">Nothing Else Matters</div>
+                  <div class="music-subtitle" id="musicSubtitle">Metallica</div>
+                </div>
+                <div class="music-controls">
+                  <div class="transport">
+                    <button class="icon-button" id="musicPrev" type="button" aria-label="Previous song">
+                      <span aria-hidden="true">&#9198;</span>
+                    </button>
+                    <button class="play-toggle" id="musicToggle" type="button" aria-label="Toggle song preview">
+                      <span class="play-shape" aria-hidden="true"></span>
+                      <span class="pause-shape" aria-hidden="true"><span></span><span></span></span>
+                    </button>
+                    <button class="icon-button" id="musicNext" type="button" aria-label="Next song">
+                      <span aria-hidden="true">&#9197;</span>
+                    </button>
+                  </div>
+                  <div class="music-progress">
+                    <div class="time-row">
+                      <span id="musicCurrent">0:00</span>
+                      <span id="musicDuration">6:28</span>
+                    </div>
+                    <div class="progress-track" id="musicTrack" role="slider" aria-label="Song progress" aria-valuemin="0" aria-valuemax="388" aria-valuenow="0" tabindex="0">
+                      <div class="progress-fill" id="musicFill"></div>
+                      <div class="progress-thumb" id="musicThumb"></div>
+                    </div>
+                    <div class="volume-row">
+                      <span class="volume-icon" aria-hidden="true"></span>
+                      <input class="volume-slider" id="musicVolume" type="range" min="0" max="1" step="0.01" value="0.65" aria-label="Volume">
+                    </div>
+                  </div>
+                </div>
+                <div class="playlist" id="musicPlaylist"></div>
+              </div>
+            </div>
+          </section>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <button class="radio-control" id="radioControl" type="button" aria-pressed="false" aria-label="Toggle radio static">
+    <span class="led" aria-hidden="true"></span>
+  </button>
+
+  <div id="youtubePlayer" class="youtube-player" aria-hidden="true"></div>
+
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script>
+    const button = document.getElementById("radioControl");
+    const musicToggle = document.getElementById("musicToggle");
+    const musicPrev = document.getElementById("musicPrev");
+    const musicNext = document.getElementById("musicNext");
+    const musicTrack = document.getElementById("musicTrack");
+    const musicFill = document.getElementById("musicFill");
+    const musicThumb = document.getElementById("musicThumb");
+    const musicCurrent = document.getElementById("musicCurrent");
+    const musicDuration = document.getElementById("musicDuration");
+    const musicTitle = document.getElementById("musicTitle");
+    const musicSubtitle = document.getElementById("musicSubtitle");
+    const musicVolume = document.getElementById("musicVolume");
+    const musicArt = document.getElementById("musicArt");
+    const musicPlaylist = document.getElementById("musicPlaylist");
+    let audioContext;
+    let masterGain;
+    let lfo;
+    let isPlaying = false;
+    const tracks = [
+      {
+        title: "Nothing Else Matters",
+        artist: "Metallica",
+        duration: 388,
+        url: "https://www.youtube.com/watch?v=tAGnKpE4NCI",
+        videoId: "tAGnKpE4NCI"
+      },
+      {
+        title: "The Unforgiven",
+        artist: "Metallica",
+        duration: 386,
+        url: "https://www.youtube.com/watch?v=DDGhKS6bSAE",
+        videoId: "DDGhKS6bSAE"
+      }
+    ];
+    let currentTrackIndex = 0;
+    let mockCurrentTime = 0;
+    let mockPlayerActive = false;
+    let mockRafId = 0;
+    let lastFrameTime = 0;
+    let activeDuration = tracks[0].duration;
+    let useRealAudio = false;
+    let player;
+    let playerReady = false;
+    let playerTickId = 0;
+
+    function createNoiseBuffer(context) {
+      const buffer = context.createBuffer(1, context.sampleRate * 2, context.sampleRate);
+      const channel = buffer.getChannelData(0);
+
+      for (let i = 0; i < channel.length; i += 1) {
+        channel[i] = (Math.random() * 2 - 1) * 0.24;
+      }
+
+      return buffer;
+    }
+
+    function setupRadio() {
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+      const source = audioContext.createBufferSource();
+      source.buffer = createNoiseBuffer(audioContext);
+      source.loop = true;
+
+      const bandpass = audioContext.createBiquadFilter();
+      bandpass.type = "bandpass";
+      bandpass.frequency.value = 1900;
+      bandpass.Q.value = 0.9;
+
+      const highpass = audioContext.createBiquadFilter();
+      highpass.type = "highpass";
+      highpass.frequency.value = 700;
+
+      masterGain = audioContext.createGain();
+      masterGain.gain.value = 0.0001;
+
+      lfo = audioContext.createOscillator();
+      const lfoGain = audioContext.createGain();
+      lfo.frequency.value = 0.18;
+      lfoGain.gain.value = 0.008;
+
+      lfo.connect(lfoGain);
+      lfoGain.connect(masterGain.gain);
+
+      source.connect(highpass);
+      highpass.connect(bandpass);
+      bandpass.connect(masterGain);
+      masterGain.connect(audioContext.destination);
+
+      source.start();
+      lfo.start();
+
+    }
+
+    async function toggleRadio() {
+      if (!audioContext) {
+        setupRadio();
+      }
+
+      if (audioContext.state === "suspended") {
+        await audioContext.resume();
+      }
+
+      isPlaying = !isPlaying;
+      masterGain.gain.cancelScheduledValues(audioContext.currentTime);
+      masterGain.gain.linearRampToValueAtTime(isPlaying ? 0.028 : 0.0001, audioContext.currentTime + 0.35);
+
+      button.classList.toggle("is-on", isPlaying);
+      button.setAttribute("aria-pressed", String(isPlaying));
+    }
+
+    button.addEventListener("click", toggleRadio);
+
+    function formatTime(value) {
+      const minutes = Math.floor(value / 60);
+      const seconds = Math.floor(value % 60);
+      return `${minutes}:${String(seconds).padStart(2, "0")}`;
+    }
+
+    function getCurrentTrack() {
+      return tracks[currentTrackIndex];
+    }
+
+    function getThumbnailUrl(track) {
+      return `https://i.ytimg.com/vi/${track.videoId}/hqdefault.jpg`;
+    }
+
+    function extractVideoId(url) {
+      if (!url) {
+        return "";
+      }
+
+      try {
+        const parsed = new URL(url);
+        if (parsed.hostname.includes("youtu.be")) {
+          return parsed.pathname.slice(1);
+        }
+        return parsed.searchParams.get("v") || "";
+      } catch (error) {
+        return "";
+      }
+    }
+
+    function updateArt() {
+      const track = getCurrentTrack();
+      musicArt.style.backgroundImage = `url("${getThumbnailUrl(track)}")`;
+    }
+
+    function renderPlaylist() {
+      musicPlaylist.innerHTML = "";
+
+      tracks.forEach((track, index) => {
+        const item = document.createElement("button");
+        item.type = "button";
+        item.className = `playlist-item${index === currentTrackIndex ? " is-active" : ""}`;
+        item.setAttribute("aria-label", `${track.title} by ${track.artist}`);
+
+        const thumb = document.createElement("span");
+        thumb.className = "playlist-thumb";
+        thumb.style.backgroundImage = `url("${getThumbnailUrl(track)}")`;
+
+        const meta = document.createElement("span");
+        meta.className = "playlist-meta";
+
+        const name = document.createElement("span");
+        name.className = "playlist-name";
+        name.textContent = track.title;
+
+        const artist = document.createElement("span");
+        artist.className = "playlist-artist";
+        artist.textContent = track.artist;
+
+        const duration = document.createElement("span");
+        duration.className = "playlist-duration";
+        duration.textContent = formatTime(track.duration);
+
+        meta.append(name, artist);
+        item.append(thumb, meta, duration);
+        item.addEventListener("click", () => {
+          goToTrack(index, mockPlayerActive);
+        });
+        musicPlaylist.append(item);
+      });
+    }
+
+    function getCurrentTimeValue() {
+      if (useRealAudio && playerReady && player && typeof player.getCurrentTime === "function") {
+        return player.getCurrentTime() || 0;
+      }
+
+      return mockCurrentTime;
+    }
+
+    function getDurationValue() {
+      if (useRealAudio && playerReady && player && typeof player.getDuration === "function") {
+        const duration = player.getDuration();
+        if (Number.isFinite(duration) && duration > 0) {
+          return duration;
+        }
+      }
+
+      return activeDuration;
+    }
+
+    function renderPlayer() {
+      const duration = getDurationValue();
+      const currentTime = Math.min(getCurrentTimeValue(), duration);
+      const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
+      musicFill.style.width = `${progress}%`;
+      musicThumb.style.left = `${progress}%`;
+      musicCurrent.textContent = formatTime(currentTime);
+      musicDuration.textContent = formatTime(duration);
+      musicTrack.setAttribute("aria-valuemax", String(Math.round(duration)));
+      musicTrack.setAttribute("aria-valuenow", String(Math.round(currentTime)));
+      musicToggle.classList.toggle("is-playing", mockPlayerActive);
+    }
+
+    function stopPlayerTick() {
+      if (playerTickId) {
+        window.clearInterval(playerTickId);
+        playerTickId = 0;
+      }
+    }
+
+    function startPlayerTick() {
+      stopPlayerTick();
+      playerTickId = window.setInterval(() => {
+        if (useRealAudio) {
+          renderPlayer();
+        }
+      }, 250);
+    }
+
+    function stepMockPlayer(timestamp) {
+      if (!mockPlayerActive) {
+        return;
+      }
+
+      if (!lastFrameTime) {
+        lastFrameTime = timestamp;
+      }
+
+      const delta = (timestamp - lastFrameTime) / 1000;
+      lastFrameTime = timestamp;
+      mockCurrentTime = Math.min(activeDuration, mockCurrentTime + delta);
+      renderPlayer();
+
+      if (mockCurrentTime >= activeDuration) {
+        goToTrack((currentTrackIndex + 1) % tracks.length, true);
+        return;
+      }
+
+      mockRafId = window.requestAnimationFrame(stepMockPlayer);
+    }
+
+    function stopMockLoop() {
+      if (mockRafId) {
+        window.cancelAnimationFrame(mockRafId);
+        mockRafId = 0;
+      }
+      lastFrameTime = 0;
+    }
+
+    function startMockLoop() {
+      stopMockLoop();
+      mockRafId = window.requestAnimationFrame(stepMockPlayer);
+    }
+
+    function syncTrackMeta() {
+      const track = getCurrentTrack();
+      musicTitle.textContent = track.title;
+      musicSubtitle.textContent = track.url ? track.artist : `${track.artist} / link missing`;
+      activeDuration = track.duration;
+      updateArt();
+      renderPlaylist();
+      if (playerReady && player && typeof player.cueVideoById === "function") {
+        const videoId = track.videoId || extractVideoId(track.url);
+        if (videoId) {
+          player.cueVideoById({
+            videoId,
+            startSeconds: 0
+          });
+        }
+      }
+      renderPlayer();
+    }
+
+    function playYouTubeTrack(track) {
+      const videoId = track.videoId || extractVideoId(track.url);
+
+      if (!videoId || !playerReady || !player) {
+        return Promise.reject(new Error("missing video"));
+      }
+
+      return new Promise((resolve) => {
+        player.loadVideoById({
+          videoId,
+          startSeconds: mockCurrentTime
+        });
+        player.setVolume(Number(musicVolume.value) * 100);
+        window.setTimeout(() => {
+          if (typeof player.playVideo === "function") {
+            player.playVideo();
+          }
+          resolve();
+        }, 250);
+      });
+    }
+
+    function goToTrack(index, autoplay = false) {
+      currentTrackIndex = (index + tracks.length) % tracks.length;
+      mockCurrentTime = 0;
+      useRealAudio = false;
+      syncTrackMeta();
+      stopMockLoop();
+      stopPlayerTick();
+
+      if (autoplay) {
+        playYouTubeTrack(getCurrentTrack()).then(() => {
+            useRealAudio = true;
+            mockPlayerActive = true;
+            startPlayerTick();
+            renderPlayer();
+          }).catch(() => {
+          mockPlayerActive = true;
+          startMockLoop();
+          renderPlayer();
+        });
+      } else {
+        mockPlayerActive = false;
+        if (playerReady && player && typeof player.stopVideo === "function") {
+          player.stopVideo();
+        }
+        stopMockLoop();
+        renderPlayer();
+      }
+    }
+
+    function toggleMockPlayer() {
+      mockPlayerActive = !mockPlayerActive;
+
+      if (mockPlayerActive && getCurrentTimeValue() >= getDurationValue()) {
+        mockCurrentTime = 0;
+        if (playerReady && player && typeof player.seekTo === "function") {
+          player.seekTo(0, true);
+        }
+      }
+
+      stopMockLoop();
+      stopPlayerTick();
+
+      if (mockPlayerActive) {
+        playYouTubeTrack(getCurrentTrack()).then(() => {
+          useRealAudio = true;
+          startPlayerTick();
+          renderPlayer();
+        }).catch(() => {
+          useRealAudio = false;
+          startMockLoop();
+          renderPlayer();
+        });
+      } else {
+        if (playerReady && player && typeof player.pauseVideo === "function") {
+          player.pauseVideo();
+        }
+        stopMockLoop();
+      }
+
+      renderPlayer();
+    }
+
+    function setMockProgress(clientX) {
+      const rect = musicTrack.getBoundingClientRect();
+      const ratio = Math.min(Math.max((clientX - rect.left) / rect.width, 0), 1);
+      const nextTime = ratio * getDurationValue();
+
+      if (useRealAudio && playerReady && player && typeof player.seekTo === "function") {
+        player.seekTo(nextTime, true);
+      }
+
+      mockCurrentTime = nextTime;
+      renderPlayer();
+    }
+
+    musicToggle.addEventListener("click", toggleMockPlayer);
+    musicPrev.addEventListener("click", () => {
+      goToTrack(currentTrackIndex - 1, mockPlayerActive);
+    });
+    musicNext.addEventListener("click", () => {
+      goToTrack(currentTrackIndex + 1, mockPlayerActive);
+    });
+    musicTrack.addEventListener("click", (event) => {
+      setMockProgress(event.clientX);
+    });
+
+    musicTrack.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowRight") {
+        const nextTime = Math.min(getDurationValue(), getCurrentTimeValue() + 5);
+        if (useRealAudio && playerReady && player && typeof player.seekTo === "function") {
+          player.seekTo(nextTime, true);
+        }
+        mockCurrentTime = nextTime;
+        renderPlayer();
+      }
+
+      if (event.key === "ArrowLeft") {
+        const nextTime = Math.max(0, getCurrentTimeValue() - 5);
+        if (useRealAudio && playerReady && player && typeof player.seekTo === "function") {
+          player.seekTo(nextTime, true);
+        }
+        mockCurrentTime = nextTime;
+        renderPlayer();
+      }
+    });
+
+    musicVolume.addEventListener("input", () => {
+      if (playerReady && player && typeof player.setVolume === "function") {
+        player.setVolume(Number(musicVolume.value) * 100);
+      }
+    });
+
+    window.onYouTubeIframeAPIReady = function onYouTubeIframeAPIReady() {
+      player = new YT.Player("youtubePlayer", {
+        height: "0",
+        width: "0",
+        videoId: tracks[0].videoId,
+        host: "https://www.youtube-nocookie.com",
+        playerVars: {
+          autoplay: 0,
+          controls: 0,
+          rel: 0,
+          modestbranding: 1,
+          playsinline: 1,
+          iv_load_policy: 3
+        },
+        events: {
+          onReady: () => {
+            playerReady = true;
+            player.setVolume(Number(musicVolume.value) * 100);
+            syncTrackMeta();
+          },
+          onStateChange: (event) => {
+            if (event.data === YT.PlayerState.PLAYING) {
+              useRealAudio = true;
+              mockPlayerActive = true;
+              const duration = player.getDuration();
+              if (Number.isFinite(duration) && duration > 0) {
+                activeDuration = duration;
+              }
+              startPlayerTick();
+              renderPlayer();
+            }
+
+            if (event.data === YT.PlayerState.PAUSED) {
+              mockCurrentTime = getCurrentTimeValue();
+              mockPlayerActive = false;
+              stopPlayerTick();
+              renderPlayer();
+            }
+
+            if (event.data === YT.PlayerState.CUED) {
+              renderPlayer();
+            }
+
+            if (event.data === YT.PlayerState.ENDED) {
+              goToTrack(currentTrackIndex + 1, true);
+            }
+          }
+        }
+      });
+    };
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden && !useRealAudio) {
+        stopMockLoop();
+      } else if (!document.hidden && mockPlayerActive && !useRealAudio) {
+        startMockLoop();
+      }
+    });
+
+    syncTrackMeta();
+  </script>
 </body>
 </html>
