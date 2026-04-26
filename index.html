@@ -120,6 +120,7 @@
       position: relative;
       overflow: hidden;
       backdrop-filter: blur(4px);
+      border-radius: 22px;
     }
 
     .shell .grain {
@@ -197,6 +198,7 @@
         radial-gradient(circle at 72% 18%, rgba(112, 84, 59, 0.22), transparent 22%),
         linear-gradient(135deg, #1a2117 0%, #10130f 46%, #191611 100%);
       overflow: hidden;
+      border-radius: 20px 20px 0 0;
     }
 
     .profile-banner::before {
@@ -243,6 +245,7 @@
       border: 1px solid rgba(240, 200, 111, 0.28);
       background: linear-gradient(180deg, rgba(44, 48, 33, 0.95), rgba(12, 16, 12, 0.95));
       box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+      border-radius: 20px;
     }
 
     .avatar-core {
@@ -255,6 +258,7 @@
         linear-gradient(135deg, #21261d, #121510);
       position: relative;
       overflow: hidden;
+      border-radius: 16px;
     }
 
     .avatar-core img {
@@ -330,6 +334,7 @@
       border: 1px solid var(--line);
       background: rgba(185, 216, 111, 0.06);
       position: relative;
+      border-radius: 999px;
     }
 
     .chip::after {
@@ -353,6 +358,7 @@
       border: 1px solid var(--line);
       background: linear-gradient(90deg, rgba(185, 216, 111, 0.12), rgba(212, 118, 88, 0.08));
       position: relative;
+      border-radius: 999px;
     }
 
     .status-pill::before {
@@ -397,6 +403,7 @@
       border: 1px solid var(--line);
       background: linear-gradient(180deg, rgba(185, 216, 111, 0.04), rgba(112, 84, 59, 0.04));
       overflow: hidden;
+      border-radius: 18px;
     }
 
     .panel-top {
@@ -404,6 +411,7 @@
       border-bottom: 1px solid var(--line);
       background: linear-gradient(90deg, rgba(185, 216, 111, 0.06), transparent 45%);
       position: relative;
+      border-radius: 18px 18px 0 0;
     }
 
     .panel-top::after {
@@ -435,6 +443,7 @@
         linear-gradient(135deg, #20251c, #121510);
       position: relative;
       overflow: hidden;
+      border-radius: 16px;
     }
 
     .showcase-card::before {
@@ -483,6 +492,7 @@
       border: 1px solid rgba(176, 204, 104, 0.18);
       background: linear-gradient(90deg, rgba(185, 216, 111, 0.05), rgba(255, 255, 255, 0.02));
       position: relative;
+      border-radius: 14px;
     }
 
     .slot::before {
@@ -520,6 +530,7 @@
       padding: 10px;
       border: 1px solid rgba(176, 204, 104, 0.18);
       background: linear-gradient(90deg, rgba(185, 216, 111, 0.06), rgba(255, 255, 255, 0.02));
+      border-radius: 16px;
     }
 
     .game-logo {
@@ -530,6 +541,16 @@
       background-size: cover;
       background-position: center;
       box-shadow: inset 0 0 0 1px rgba(185, 216, 111, 0.08);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      border-radius: 14px;
+    }
+
+    .game-logo svg {
+      width: 100%;
+      height: 100%;
+      display: block;
     }
 
     .game-meta {
@@ -578,6 +599,7 @@
         radial-gradient(circle at 50% 35%, rgba(185, 216, 111, 0.14), transparent 20%),
         linear-gradient(135deg, #1d221a, #10130f);
       position: relative;
+      border-radius: 14px;
     }
 
     .friend::after {
@@ -608,6 +630,7 @@
       overflow: hidden;
       background-size: cover;
       background-position: center;
+      border-radius: 16px;
     }
 
     .music-art::before {
@@ -673,6 +696,7 @@
       place-items: center;
       cursor: pointer;
       transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+      border-radius: 12px;
     }
 
     .icon-button:hover {
@@ -691,6 +715,7 @@
       place-items: center;
       cursor: pointer;
       transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+      border-radius: 14px;
     }
 
     .play-toggle:hover {
@@ -841,6 +866,7 @@
       text-align: left;
       cursor: pointer;
       transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
+      border-radius: 14px;
     }
 
     .playlist-item:hover {
@@ -862,6 +888,7 @@
       background-position: center;
       position: relative;
       overflow: hidden;
+      border-radius: 10px;
     }
 
     .playlist-thumb::after {
@@ -920,6 +947,7 @@
       letter-spacing: 0.08em;
       cursor: pointer;
       box-shadow: var(--shadow);
+      border-radius: 999px;
     }
 
     .radio-control .led {
@@ -1076,21 +1104,21 @@
             <div class="panel-body">
               <div class="game-list">
                 <div class="game-item">
-                  <div class="game-logo" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/War_Thunder_Logo_2023.svg/512px-War_Thunder_Logo_2023.svg.png');"></div>
+                  <div class="game-logo" aria-hidden="true" style="background-image: url('assets/games/warthunder.png'); background-size: contain; background-repeat: no-repeat;"></div>
                   <div class="game-meta">
                     <div class="game-name">War Thunder</div>
                     <div class="game-bar" style="--fill: 82%;"></div>
                   </div>
                 </div>
                 <div class="game-item">
-                  <div class="game-logo" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/BeamNG.drive_logo.svg/512px-BeamNG.drive_logo.svg.png');"></div>
+                  <div class="game-logo" aria-hidden="true" style="background-image: url('assets/games/beamng.png'); background-size: contain; background-repeat: no-repeat;"></div>
                   <div class="game-meta">
                     <div class="game-name">BeamNG</div>
                     <div class="game-bar" style="--fill: 68%;"></div>
                   </div>
                 </div>
                 <div class="game-item">
-                  <div class="game-logo" style="background-image: url('https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/512px-Minecraft_2024_cover_art.png');"></div>
+                  <div class="game-logo" aria-hidden="true" style="background-image: url('assets/games/minecraft.png'); background-size: contain; background-repeat: no-repeat;"></div>
                   <div class="game-meta">
                     <div class="game-name">Minecraft</div>
                     <div class="game-bar" style="--fill: 74%;"></div>
@@ -1184,7 +1212,10 @@
     const musicPlaylist = document.getElementById("musicPlaylist");
     let audioContext;
     let masterGain;
-    let lfo;
+    let staticBedGain;
+    let crackleGain;
+    let burstTimer;
+    let sweepTimer;
     let isPlaying = false;
     const tracks = [
       {
@@ -1213,52 +1244,147 @@
     let playerReady = false;
     let playerTickId = 0;
 
-    function createNoiseBuffer(context) {
+    function createNoiseBuffer(context, intensity = 0.24) {
       const buffer = context.createBuffer(1, context.sampleRate * 2, context.sampleRate);
       const channel = buffer.getChannelData(0);
 
       for (let i = 0; i < channel.length; i += 1) {
-        channel[i] = (Math.random() * 2 - 1) * 0.24;
+        channel[i] = (Math.random() * 2 - 1) * intensity;
       }
 
       return buffer;
     }
 
+    function createCrackleBuffer(context) {
+      const buffer = context.createBuffer(1, context.sampleRate * 2, context.sampleRate);
+      const channel = buffer.getChannelData(0);
+
+      for (let i = 0; i < channel.length; i += 1) {
+        const burst = Math.random() > 0.992 ? (Math.random() * 2 - 1) * 0.95 : 0;
+        const dust = (Math.random() * 2 - 1) * 0.035;
+        channel[i] = burst + dust;
+      }
+
+      return buffer;
+    }
+
+    function createRadioWaveshaper() {
+      const curve = new Float32Array(512);
+
+      for (let i = 0; i < curve.length; i += 1) {
+        const x = (i / (curve.length - 1)) * 2 - 1;
+        curve[i] = Math.tanh(x * 2.8) * 0.78;
+      }
+
+      return curve;
+    }
+
+    function scheduleRadioMovement() {
+      if (!audioContext || !staticBedGain || !crackleGain) {
+        return;
+      }
+
+      const now = audioContext.currentTime;
+      const bedTarget = 0.028 + Math.random() * 0.03;
+      const crackleTarget = 0.014 + Math.random() * 0.028;
+
+      staticBedGain.gain.cancelScheduledValues(now);
+      staticBedGain.gain.linearRampToValueAtTime(bedTarget, now + 0.12);
+
+      crackleGain.gain.cancelScheduledValues(now);
+      crackleGain.gain.linearRampToValueAtTime(crackleTarget, now + 0.04);
+    }
+
+    function scheduleRadioBurst() {
+      if (!audioContext || !crackleGain || !staticBedGain) {
+        return;
+      }
+
+      const now = audioContext.currentTime;
+      const burstStrength = 0.05 + Math.random() * 0.05;
+      const bedDip = 0.018 + Math.random() * 0.014;
+
+      crackleGain.gain.cancelScheduledValues(now);
+      crackleGain.gain.setValueAtTime(crackleGain.gain.value, now);
+      crackleGain.gain.linearRampToValueAtTime(burstStrength, now + 0.015);
+      crackleGain.gain.linearRampToValueAtTime(0.016 + Math.random() * 0.012, now + 0.11);
+
+      staticBedGain.gain.cancelScheduledValues(now);
+      staticBedGain.gain.setValueAtTime(staticBedGain.gain.value, now);
+      staticBedGain.gain.linearRampToValueAtTime(bedDip, now + 0.02);
+      staticBedGain.gain.linearRampToValueAtTime(0.036 + Math.random() * 0.012, now + 0.18);
+    }
+
     function setupRadio() {
       audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
-      const source = audioContext.createBufferSource();
-      source.buffer = createNoiseBuffer(audioContext);
-      source.loop = true;
+      const staticSource = audioContext.createBufferSource();
+      staticSource.buffer = createNoiseBuffer(audioContext, 0.22);
+      staticSource.loop = true;
 
-      const bandpass = audioContext.createBiquadFilter();
-      bandpass.type = "bandpass";
-      bandpass.frequency.value = 1900;
-      bandpass.Q.value = 0.9;
+      const crackleSource = audioContext.createBufferSource();
+      crackleSource.buffer = createCrackleBuffer(audioContext);
+      crackleSource.loop = true;
 
       const highpass = audioContext.createBiquadFilter();
       highpass.type = "highpass";
-      highpass.frequency.value = 700;
+      highpass.frequency.value = 1180;
+
+      const bandpass = audioContext.createBiquadFilter();
+      bandpass.type = "bandpass";
+      bandpass.frequency.value = 2150;
+      bandpass.Q.value = 1.35;
+
+      const lowpass = audioContext.createBiquadFilter();
+      lowpass.type = "lowpass";
+      lowpass.frequency.value = 3000;
+
+      const shaper = audioContext.createWaveShaper();
+      shaper.curve = createRadioWaveshaper();
+      shaper.oversample = "4x";
+
+      staticBedGain = audioContext.createGain();
+      staticBedGain.gain.value = 0.04;
+
+      crackleGain = audioContext.createGain();
+      crackleGain.gain.value = 0.018;
+
+      const radioBus = audioContext.createGain();
+      radioBus.gain.value = 1.08;
+
+      const humOsc = audioContext.createOscillator();
+      humOsc.type = "sine";
+      humOsc.frequency.value = 52;
+
+      const humGain = audioContext.createGain();
+      humGain.gain.value = 0.0014;
 
       masterGain = audioContext.createGain();
       masterGain.gain.value = 0.0001;
 
-      lfo = audioContext.createOscillator();
-      const lfoGain = audioContext.createGain();
-      lfo.frequency.value = 0.18;
-      lfoGain.gain.value = 0.008;
-
-      lfo.connect(lfoGain);
-      lfoGain.connect(masterGain.gain);
-
-      source.connect(highpass);
+      staticSource.connect(highpass);
       highpass.connect(bandpass);
-      bandpass.connect(masterGain);
+      bandpass.connect(staticBedGain);
+      staticBedGain.connect(radioBus);
+
+      crackleSource.connect(lowpass);
+      lowpass.connect(crackleGain);
+      crackleGain.connect(radioBus);
+
+      humOsc.connect(humGain);
+      humGain.connect(radioBus);
+
+      radioBus.connect(shaper);
+      shaper.connect(masterGain);
       masterGain.connect(audioContext.destination);
 
-      source.start();
-      lfo.start();
+      staticSource.start();
+      crackleSource.start();
+      humOsc.start();
 
+      scheduleRadioMovement();
+      burstTimer = window.setInterval(scheduleRadioBurst, 420 + Math.random() * 380);
+      sweepTimer = window.setInterval(scheduleRadioMovement, 900);
     }
 
     async function toggleRadio() {
@@ -1272,7 +1398,7 @@
 
       isPlaying = !isPlaying;
       masterGain.gain.cancelScheduledValues(audioContext.currentTime);
-      masterGain.gain.linearRampToValueAtTime(isPlaying ? 0.028 : 0.0001, audioContext.currentTime + 0.35);
+      masterGain.gain.linearRampToValueAtTime(isPlaying ? 0.082 : 0.0001, audioContext.currentTime + 0.2);
 
       button.classList.toggle("is-on", isPlaying);
       button.setAttribute("aria-pressed", String(isPlaying));
