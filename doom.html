@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DOOM Mini-Game</title>
+  <style>
+    :root {
+      --bg: #0a0d09;
+      --bg-soft: #161a13;
+      --panel: rgba(17, 21, 16, 0.9);
+      --line: rgba(176, 204, 104, 0.22);
+      --text: #dde0c8;
+      --muted: #97a17e;
+      --accent: #b9d86f;
+      --accent-soft: #f0c86f;
+      --danger: #d47658;
+      --rust: #70543b;
+      --shadow: 0 0 24px rgba(185, 216, 111, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at top, rgba(185, 216, 111, 0.07), transparent 24%),
+        radial-gradient(circle at bottom, rgba(112, 84, 59, 0.12), transparent 28%),
+        linear-gradient(180deg, #0b0f0b 0%, #040503 100%);
+      color: var(--text);
+      font-family: "Courier New", Courier, monospace;
+      font-language-override: normal;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(255, 255, 255, 0.035) 0,
+          rgba(255, 255, 255, 0.035) 1px,
+          transparent 1px,
+          transparent 3px
+        );
+      mix-blend-mode: soft-light;
+      opacity: 0.28;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, rgba(212, 118, 88, 0.045), transparent 24%, transparent 76%, rgba(185, 216, 111, 0.04)),
+        radial-gradient(circle at center, transparent 55%, rgba(0, 0, 0, 0.45) 100%);
+      opacity: 0.55;
+    }
+
+    .noise {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.06;
+      background-image:
+        radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.85) 0.7px, transparent 0.9px),
+        radial-gradient(circle at 80% 40%, rgba(255, 255, 255, 0.65) 0.7px, transparent 0.9px),
+        radial-gradient(circle at 40% 70%, rgba(255, 255, 255, 0.75) 0.7px, transparent 0.9px);
+      background-size: 18px 18px;
+      animation: drift 6s steps(6) infinite;
+    }
+
+    .grid {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(185, 216, 111, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(185, 216, 111, 0.05) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.9) 22%, rgba(0, 0, 0, 0.9) 78%, transparent);
+      opacity: 0.18;
+    }
+
+    .fog {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 10% 80%, rgba(185, 216, 111, 0.1), transparent 18%),
+        radial-gradient(circle at 85% 22%, rgba(112, 84, 59, 0.12), transparent 22%),
+        radial-gradient(circle at 50% 100%, rgba(119, 132, 84, 0.1), transparent 30%);
+      filter: blur(24px);
+      opacity: 0.7;
+      animation: fogShift 18s ease-in-out infinite alternate;
+    }
+
+    main {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .doom-container {
+      width: min(100%, 900px);
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(4px);
+    }
+
+    .doom-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .doom-title {
+      font-size: 48px;
+      font-weight: bold;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin: 0 0 8px 0;
+      text-shadow: 0 0 20px rgba(185, 216, 111, 0.5);
+    }
+
+    .doom-subtitle {
+      font-size: 14px;
+      color: var(--muted);
+      margin: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+    }
+
+    .doom-game-container {
+      background: var(--bg-soft);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .doom-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .doom-controls h3 {
+      margin: 0;
+      color: var(--accent);
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .doom-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .doom-btn {
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.2s;
+    }
+
+    .doom-btn:hover {
+      background: var(--accent-soft);
+      transform: translateY(-1px);
+    }
+
+    .doom-canvas-wrapper {
+      display: flex;
+      justify-content: center;
+      margin: 12px 0;
+      border: 2px solid var(--line);
+      border-radius: 4px;
+      overflow: hidden;
+      background: #000;
+    }
+
+    .doom-canvas {
+      display: block;
+      background: #111;
+      cursor: crosshair;
+    }
+
+    .doom-instructions {
+      margin-top: 12px;
+      padding-top: 8px;
+      border-top: 1px solid var(--line);
+    }
+
+    .doom-instructions p {
+      margin: 4px 0;
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 16px;
+      padding: 8px 16px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      transition: all 0.2s;
+    }
+
+    .back-link:hover {
+      background: var(--accent);
+      color: var(--bg);
+      transform: translateY(-1px);
+    }
+
+    @keyframes drift {
+      0%, 100% { transform: translate(0, 0); }
+      16% { transform: translate(-3px, 3px); }
+      33% { transform: translate(3px, -3px); }
+      50% { transform: translate(-3px, -3px); }
+      66% { transform: translate(3px, 3px); }
+      83% { transform: translate(-3px, 3px); }
+    }
+
+    @keyframes fogShift {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(-20px, -20px) scale(1.1); }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="grid" aria-hidden="true"></div>
+  <div class="fog" aria-hidden="true"></div>
+
+  <main>
+    <div class="doom-container">
+      <div class="doom-header">
+        <h1 class="doom-title">DOOM</h1>
+        <p class="doom-subtitle">Mini-Game</p>
+      </div>
+
+      <div class="doom-game-container">
+        <div class="doom-controls">
+          <h3>Game Controls</h3>
+          <div class="doom-buttons">
+            <button id="doomPlayBtn" class="doom-btn">PLAY</button>
+            <button id="doomMuteBtn" class="doom-btn">🔊</button>
+          </div>
+        </div>
+        <div class="doom-canvas-wrapper">
+          <canvas id="doomCanvas" width="640" height="320" class="doom-canvas"></canvas>
+        </div>
+        <div class="doom-instructions">
+          <p>🎯 Target monsters with mouse | 🔫 Shoot with left-click</p>
+          <p>🟤 Brown monsters: 100pts | 🟢 Green monsters: 1000pts</p>
+        </div>
+      </div>
+
+      <a href="/" class="back-link">← Back to Profile</a>
+    </div>
+  </main>
+
+  <!-- Doom Game Scripts -->
+  <script src="lib/easeljs-0.6.0.min.js"></script>
+  <script src="lib/preloadjs-0.3.0.min.js"></script>
+  <script src="lib/soundjs-0.4.0.min.js"></script>
+  <script src="js/doom.js"></script>
+  
+  <script>
+    // Initialize Doom Game
+    document.addEventListener('DOMContentLoaded', function() {
+      const doomCanvas = document.getElementById('doomCanvas');
+      const playBtn = document.getElementById('doomPlayBtn');
+      const muteBtn = document.getElementById('doomMuteBtn');
+      
+      // Initialize doom game
+      window.onload = function() {
+        if (typeof initGameVars === 'function') {
+          initGameVars();
+          
+          // Set up canvas reference for doom game
+          if (typeof canvas !== 'undefined') {
+            canvas = doomCanvas;
+            stage = new createjs.Stage(canvas);
+            stage_width = 640;
+            stage_height = 320;
+            
+            // Start the game
+            if (typeof loadMenuScrn === 'function') {
+              loadMenuScrn(0);
+            }
+          }
+        }
+      };
+      
+      // Play button functionality
+      if (playBtn) {
+        playBtn.addEventListener('click', function() {
+          if (typeof startGame === 'function') {
+            startGame();
+          }
+        });
+      }
+      
+      // Mute button functionality  
+      if (muteBtn) {
+        muteBtn.addEventListener('click', function() {
+          if (typeof createjs !== 'undefined' && createjs.Sound) {
+            const isMuted = createjs.Sound.getMute();
+            createjs.Sound.setMute(!isMuted);
+            muteBtn.textContent = isMuted ? '🔊' : '🔇';
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>
